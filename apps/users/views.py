@@ -12,6 +12,7 @@ from apps.users.serializers import UserProfileSerializer, TokenObtainPairSeriali
 from apps.users.permissions import ROLE_CAPABILITIES, MANAGER_CAPABILITIES
 from apps.users.serializers import UserListSerializer, UserCreateSerializer, UserDetailSerializer
 from apps.users.permissions import HasCapability
+from apps.users.utils import generate_temp_password
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
@@ -172,9 +173,7 @@ class UserResetPasswordView(APIView):
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        import secrets, string
-        alphabet = string.ascii_letters + string.digits + string.punctuation
-        temp = ''.join(secrets.choice(alphabet) for _ in range(16))
+        temp = generate_temp_password()
         user.set_password(temp)
         user.must_change_password = True
         user.save()

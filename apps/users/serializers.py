@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
+from apps.users.utils import generate_temp_password
+
 User = get_user_model()
 
 
@@ -22,16 +24,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'role', 'first_name', 'last_name', 'phone')
 
     def create(self, validated_data):
-        import secrets, string
-        # generate a secure temporary password (12 chars, mixed)
-        alphabet = string.ascii_letters + string.digits + string.punctuation
-        temp = ''.join(secrets.choice(alphabet) for _ in range(16))
+        temp = generate_temp_password()
         user = User(**validated_data)
         user.set_password(temp)
         user.must_change_password = True
         user.is_active = True
         user.save()
-        # attach temporary password to serializer instance (not saved to DB)
         self._temporary_password = temp
         return user
 
