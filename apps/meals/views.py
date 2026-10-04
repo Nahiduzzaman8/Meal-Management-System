@@ -17,7 +17,7 @@ class MealListCreateView(APIView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
-            self.required_capability = 'meal.view_all' if request.user.has_capability('meal.view_all') and request.query_params.get('month') else 'meal.view_own'
+            self.required_capability = 'meal.view_all' if request.user.has_capability('meal.view_all') and request.GET.get('month') else 'meal.view_own'
         elif request.method == 'POST':
             self.required_capability = 'meal.submit'
         return super().dispatch(request, *args, **kwargs)
