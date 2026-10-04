@@ -15,12 +15,13 @@ from apps.users.permissions import HasCapability
 class MealListCreateView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
 
-    def dispatch(self, request, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
+        self.perform_authentication(request)
         if request.method == 'GET':
             self.required_capability = 'meal.view_all' if request.user.has_capability('meal.view_all') and request.GET.get('month') else 'meal.view_own'
         elif request.method == 'POST':
             self.required_capability = 'meal.submit'
-        return super().dispatch(request, *args, **kwargs)
+        super().initial(request, *args, **kwargs)
 
     def get(self, request):
         if request.user.has_capability('meal.view_all') and request.query_params.get('month'):
