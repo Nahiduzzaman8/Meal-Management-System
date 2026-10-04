@@ -14,12 +14,13 @@ from apps.users.permissions import HasCapability
 class DepositListCreateView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
 
-    def dispatch(self, request, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
+        self.perform_authentication(request)
         if request.method == 'GET':
-            self.required_capability = 'deposit.approve' if request.user.has_capability('deposit.approve') and request.query_params.get('month') else 'deposit.view_own'
+            self.required_capability = 'deposit.approve' if request.user.has_capability('deposit.approve') and request.GET.get('month') else 'deposit.view_own'
         elif request.method == 'POST':
             self.required_capability = 'deposit.submit'
-        return super().dispatch(request, *args, **kwargs)
+        super().initial(request, *args, **kwargs)
 
     def get(self, request):
         if request.user.has_capability('deposit.approve') and request.query_params.get('month'):
