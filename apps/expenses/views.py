@@ -10,7 +10,6 @@ from apps.expenses.serializers import ExpenseSerializer
 from apps.months.models import Month
 from apps.users.permissions import HasCapability
 
-
 class ExpenseListCreateView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
     required_capability = 'expense.create'
@@ -38,7 +37,6 @@ class ExpenseListCreateView(APIView):
                 return Response(detail, status=status.HTTP_400_BAD_REQUEST)
             raise
 
-
 class ExpenseDetailView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
     required_capability = 'expense.update'
@@ -59,7 +57,6 @@ class ExpenseDetailView(APIView):
                 return Response(detail, status=status.HTTP_400_BAD_REQUEST)
             raise
 
-
 class ExpenseDeleteView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
     required_capability = 'expense.delete'
@@ -77,3 +74,5 @@ class ExpenseDeleteView(APIView):
         expense.delete_reason = reason
         expense.save(update_fields=['is_deleted', 'deleted_at', 'deleted_by', 'delete_reason'])
         return Response({'status': 'deleted'})
+
+
