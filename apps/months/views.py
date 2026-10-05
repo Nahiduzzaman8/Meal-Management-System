@@ -14,7 +14,14 @@ from apps.months.models import Month, MonthMember
 
 class MonthCreateView(APIView):
     permission_classes = (IsAuthenticated, HasCapability)
-    required_capability = 'month.create'
+
+    def initial(self, request, *args, **kwargs):
+        self.required_capability = 'month.view' if request.method == 'GET' else 'month.create'
+        super().initial(request, *args, **kwargs)
+
+    def get(self, request):
+        months = Month.objects.all().order_by('-start_date')
+        return Response(MonthSerializer(months, many=True).data)
 
     def post(self, request):
         ser = MonthSerializer(data=request.data)
